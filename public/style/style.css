@@ -1,0 +1,15 @@
+.CalendarDate {
+  border-color: black;
+  border-width: 1px;
+  border-style: solid;
+  height: 130px;
+  width: 200px;
+  float: left;
+  margin-right: 1px;
+  margin-bottom: 1px;
+}
+.CalendarDays {
+  float: left;
+  width: 201px;
+  margin-right: 1px;
+}
