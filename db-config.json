@@ -1,0 +1,9 @@
+{
+  "database": "calendar",
+  "user": "maticrepse",
+  "password": "tpotest",
+  "options": {
+    "dialect": "postgres",
+    "host": "localhost"
+  }
+}

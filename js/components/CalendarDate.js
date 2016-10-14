@@ -3,19 +3,21 @@ import Relay from "react-relay";
 
 class CalendarDate extends React.Component {
    render () {
-     return <span className="CalendarDate">{this.props.date}</span>;
+     let today = new Date();
+     if (this.props.date === today.getDate() && this.props.month === today.getMonth() && this.props.year === today.getFullYear()) {
+       let classes = `CalendarDate Today ${this.props.addClass}`;
+       let id = `${this.props.year}.${this.props.month}.${this.props.date}`;
+       return <span className={classes} onClick={this.props.clickDate} id={id}>{this.props.date}</span>;
+     }
+     let classes = `CalendarDate ${this.props.addClass}`;
+     let id = `${this.props.year}.${this.props.month}.${this.props.date}`;
+     return <span className={classes} onClick={this.props.clickDate} id={id}>{this.props.date}</span>;
    }
 }
 
-CalendarDate = Relay.createContainer(CalendarDate, {
-   fragments: {
-      counter: () => Relay.QL`
-         fragment on Counter {
-            counter
-         }
-      `
-   }
-});
+// CalendarDate = Relay.createContainer(CalendarDate, {
+//    fragments: null
+// });
 
 
 export default CalendarDate;

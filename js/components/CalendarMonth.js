@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Relay from "react-relay";
 import CalendarDate from "./CalendarDate";
+import CalendarDay from "./CalendarDay";
 
 class CalendarMonth extends Component {
   constructor(props) {
@@ -9,7 +10,11 @@ class CalendarMonth extends Component {
       day: new Date().getDay(),
       date: new Date().getDate(),
       month: new Date().getMonth(),
-      year: new Date().getFullYear()
+      year: new Date().getFullYear(),
+      showMonthView: true,
+      dayViewDate: new Date().getDate(),
+      dayViewMonth: new Date().getMonth(),
+      dayViewYear: new Date().getFullYear(),
     };
   }
   day = (day) => {
@@ -91,19 +96,33 @@ class CalendarMonth extends Component {
       this.setState({month: this.state.month+1});
     }
   }
+  clickDate = (event) => {
+    let clicked = event.target.id.split(".");
+    this.setState({
+      showMonthView: false,
+      dayViewYear: parseInt(clicked[0]),
+      dayViewMonth: parseInt(clicked[1]),
+      dayViewDate: parseInt(clicked[2])
+    });
+  }
+  monthView = () => {
+    this.setState({
+      showMonthView: true
+    });
+  }
   render(){
     let date = [];
     let firstDay = new Date(this.state.year, this.state.month, 1).getDay();
     for (var i = 0; i < firstDay; i++) {
       let prevMonth = new Date(this.state.year, this.state.month, 1-firstDay+i);
       let key = `${prevMonth.getFullYear()}${prevMonth.getMonth()}${prevMonth.getDate()}`;
-      date.push(<CalendarDate key={key} counter={null} date={prevMonth.getDate()}/>);
+      date.push(<CalendarDate key={key} counter={null} date={prevMonth.getDate()} month={prevMonth.getMonth()} year={prevMonth.getFullYear()} addClass="notThisMonth" clickDate={this.clickDate}/>);
     }
-    date.push(<br className="Kakec" />);
+    date.push(<br />);
     for (var i = 1; i <= new Date(this.state.year, this.state.month+1, 0).getDate(); i++) {
       let thisMonth = new Date(this.state.year, this.state.month, i);
       let key = `${thisMonth.getFullYear()}${thisMonth.getMonth()}${thisMonth.getDate()}`;
-      date.push(<CalendarDate key={key} counter={null} date={i}/>);
+      date.push(<CalendarDate key={key} counter={null} date={i} month={thisMonth.getMonth()} year={thisMonth.getFullYear()} addClass="thisMonth"  clickDate={this.clickDate}/>);
       if (i%7 === 0) {
         date.push(<br />);
       }
@@ -112,7 +131,7 @@ class CalendarMonth extends Component {
     for (var i = 1; i < 7-lastDay; i++) {
       let nextMonth = new Date(this.state.year, this.state.month+1, i);
       let key = `${nextMonth.getFullYear()}${nextMonth.getMonth()}${nextMonth.getDate()}`;
-      date.push(<CalendarDate key={key} counter={null} date={i}/>);
+      date.push(<CalendarDate key={key} counter={null} date={i} month={nextMonth.getMonth()} year={nextMonth.getFullYear()} addClass="notThisMonth"  clickDate={this.clickDate}/>);
     }
 
     let datumi = [];
@@ -133,14 +152,21 @@ class CalendarMonth extends Component {
        gumbi.push(`${this.month(this.state.month)} ${this.state.year}`);
        gumbi.push(<button onClick={this.next}>{this.month(this.state.month+1)}</button>);
      }
+
     return (
       <div>
-         <h3>Mesec</h3>
-         <div>
-            <div>{gumbi}</div>
-            <div>{datumi}</div>
-            <div>{date}</div>
+        {this.state.showMonthView
+         ?<div>
+            <h3>Mesec</h3>
+              <div>{gumbi}</div>
+              <div>{datumi}</div>
+              <div className="monthView">{date}</div>
          </div>
+         :<div>
+            <button onClick={this.monthView}>Month view</button>
+            <CalendarDay counter={null} date={this.state.dayViewDate} month={this.state.dayViewMonth} year={this.state.dayViewYear} />
+          </div>
+       }
       </div>
    );
   }
@@ -150,9 +176,7 @@ CalendarMonth = Relay.createContainer(CalendarMonth, {
    fragments: {
       store: () => Relay.QL`
          fragment on Store {
-            data{
-               ${ CalendarDate.getFragment("counter") }
-            }
+            id
          }
       `
    }

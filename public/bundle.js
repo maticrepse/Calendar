@@ -20216,6 +20216,10 @@
 	
 	var _CalendarDate2 = _interopRequireDefault(_CalendarDate);
 	
+	var _CalendarDay = __webpack_require__(/*! ./CalendarDay */ 393);
+	
+	var _CalendarDay2 = _interopRequireDefault(_CalendarDay);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -20315,11 +20319,31 @@
 	      }
 	    };
 	
+	    _this.clickDate = function (event) {
+	      var clicked = event.target.id.split(".");
+	      _this.setState({
+	        showMonthView: false,
+	        dayViewYear: parseInt(clicked[0]),
+	        dayViewMonth: parseInt(clicked[1]),
+	        dayViewDate: parseInt(clicked[2])
+	      });
+	    };
+	
+	    _this.monthView = function () {
+	      _this.setState({
+	        showMonthView: true
+	      });
+	    };
+	
 	    _this.state = {
 	      day: new Date().getDay(),
 	      date: new Date().getDate(),
 	      month: new Date().getMonth(),
-	      year: new Date().getFullYear()
+	      year: new Date().getFullYear(),
+	      showMonthView: true,
+	      dayViewDate: new Date().getDate(),
+	      dayViewMonth: new Date().getMonth(),
+	      dayViewYear: new Date().getFullYear()
 	    };
 	    return _this;
 	  }
@@ -20332,13 +20356,13 @@
 	      for (var i = 0; i < firstDay; i++) {
 	        var prevMonth = new Date(this.state.year, this.state.month, 1 - firstDay + i);
 	        var key = "" + prevMonth.getFullYear() + prevMonth.getMonth() + prevMonth.getDate();
-	        date.push(_react2.default.createElement(_CalendarDate2.default, { key: key, counter: null, date: prevMonth.getDate() }));
+	        date.push(_react2.default.createElement(_CalendarDate2.default, { key: key, counter: null, date: prevMonth.getDate(), month: prevMonth.getMonth(), year: prevMonth.getFullYear(), addClass: "notThisMonth", clickDate: this.clickDate }));
 	      }
-	      date.push(_react2.default.createElement("br", { className: "Kakec" }));
+	      date.push(_react2.default.createElement("br", null));
 	      for (var i = 1; i <= new Date(this.state.year, this.state.month + 1, 0).getDate(); i++) {
 	        var thisMonth = new Date(this.state.year, this.state.month, i);
 	        var _key = "" + thisMonth.getFullYear() + thisMonth.getMonth() + thisMonth.getDate();
-	        date.push(_react2.default.createElement(_CalendarDate2.default, { key: _key, counter: null, date: i }));
+	        date.push(_react2.default.createElement(_CalendarDate2.default, { key: _key, counter: null, date: i, month: thisMonth.getMonth(), year: thisMonth.getFullYear(), addClass: "thisMonth", clickDate: this.clickDate }));
 	        if (i % 7 === 0) {
 	          date.push(_react2.default.createElement("br", null));
 	        }
@@ -20347,7 +20371,7 @@
 	      for (var i = 1; i < 7 - lastDay; i++) {
 	        var nextMonth = new Date(this.state.year, this.state.month + 1, i);
 	        var _key2 = "" + nextMonth.getFullYear() + nextMonth.getMonth() + nextMonth.getDate();
-	        date.push(_react2.default.createElement(_CalendarDate2.default, { key: _key2, counter: null, date: i }));
+	        date.push(_react2.default.createElement(_CalendarDate2.default, { key: _key2, counter: null, date: i, month: nextMonth.getMonth(), year: nextMonth.getFullYear(), addClass: "notThisMonth", clickDate: this.clickDate }));
 	      }
 	
 	      var datumi = [];
@@ -20396,17 +20420,18 @@
 	          this.month(this.state.month + 1)
 	        ));
 	      }
+	
 	      return _react2.default.createElement(
 	        "div",
 	        null,
-	        _react2.default.createElement(
-	          "h3",
-	          null,
-	          "Mesec"
-	        ),
-	        _react2.default.createElement(
+	        this.state.showMonthView ? _react2.default.createElement(
 	          "div",
 	          null,
+	          _react2.default.createElement(
+	            "h3",
+	            null,
+	            "Mesec"
+	          ),
 	          _react2.default.createElement(
 	            "div",
 	            null,
@@ -20419,9 +20444,18 @@
 	          ),
 	          _react2.default.createElement(
 	            "div",
-	            null,
+	            { className: "monthView" },
 	            date
 	          )
+	        ) : _react2.default.createElement(
+	          "div",
+	          null,
+	          _react2.default.createElement(
+	            "button",
+	            { onClick: this.monthView },
+	            "Month view"
+	          ),
+	          _react2.default.createElement(_CalendarDay2.default, { counter: null, date: this.state.dayViewDate, month: this.state.dayViewMonth, year: this.state.dayViewYear })
 	        )
 	      );
 	    }
@@ -20435,17 +20469,15 @@
 	CalendarMonth = _reactRelay2.default.createContainer(CalendarMonth, {
 	  fragments: {
 	    store: function store() {
-	      return function (RQL_0) {
+	      return function () {
 	        return {
 	          children: [{
-	            children: [].concat.apply([], [_reactRelay2.default.QL.__frag(RQL_0)]),
-	            fieldName: "data",
+	            fieldName: "id",
 	            kind: "Field",
 	            metadata: {
-	              canHaveSubselections: true,
-	              isPlural: true
+	              isRequisite: true
 	            },
-	            type: "Counter"
+	            type: "ID"
 	          }],
 	          id: _reactRelay2.default.QL.__id(),
 	          kind: "Fragment",
@@ -20453,7 +20485,7 @@
 	          name: "CalendarMonth_StoreRelayQL",
 	          type: "Store"
 	        };
-	      }(_CalendarDate2.default.getFragment("counter"));
+	      }();
 	    }
 	  }
 	});
@@ -43571,7 +43603,7 @@
 	"use strict";
 	
 	Object.defineProperty(exports, "__esModule", {
-	   value: true
+	  value: true
 	});
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -43593,51 +43625,117 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
 	var CalendarDate = function (_React$Component) {
-	   _inherits(CalendarDate, _React$Component);
+	  _inherits(CalendarDate, _React$Component);
 	
-	   function CalendarDate() {
-	      _classCallCheck(this, CalendarDate);
+	  function CalendarDate() {
+	    _classCallCheck(this, CalendarDate);
 	
-	      return _possibleConstructorReturn(this, Object.getPrototypeOf(CalendarDate).apply(this, arguments));
-	   }
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(CalendarDate).apply(this, arguments));
+	  }
 	
-	   _createClass(CalendarDate, [{
-	      key: "render",
-	      value: function render() {
-	         return _react2.default.createElement(
-	            "span",
-	            { className: "CalendarDate" },
-	            this.props.date
-	         );
+	  _createClass(CalendarDate, [{
+	    key: "render",
+	    value: function render() {
+	      var today = new Date();
+	      if (this.props.date === today.getDate() && this.props.month === today.getMonth() && this.props.year === today.getFullYear()) {
+	        var _classes = "CalendarDate Today " + this.props.addClass;
+	        var _id = this.props.year + "." + this.props.month + "." + this.props.date;
+	        return _react2.default.createElement(
+	          "span",
+	          { className: _classes, onClick: this.props.clickDate, id: _id },
+	          this.props.date
+	        );
 	      }
-	   }]);
+	      var classes = "CalendarDate " + this.props.addClass;
+	      var id = this.props.year + "." + this.props.month + "." + this.props.date;
+	      return _react2.default.createElement(
+	        "span",
+	        { className: classes, onClick: this.props.clickDate, id: id },
+	        this.props.date
+	      );
+	    }
+	  }]);
 	
-	   return CalendarDate;
+	  return CalendarDate;
 	}(_react2.default.Component);
 	
-	CalendarDate = _reactRelay2.default.createContainer(CalendarDate, {
-	   fragments: {
-	      counter: function counter() {
-	         return function () {
-	            return {
-	               children: [{
-	                  fieldName: "counter",
-	                  kind: "Field",
-	                  metadata: {},
-	                  type: "Int"
-	               }],
-	               id: _reactRelay2.default.QL.__id(),
-	               kind: "Fragment",
-	               metadata: {},
-	               name: "CalendarDate_CounterRelayQL",
-	               type: "Counter"
-	            };
-	         }();
-	      }
-	   }
-	});
+	// CalendarDate = Relay.createContainer(CalendarDate, {
+	//    fragments: null
+	// });
 	
 	exports.default = CalendarDate;
+
+/***/ },
+/* 393 */
+/*!**************************************!*\
+  !*** ./js/components/CalendarDay.js ***!
+  \**************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactRelay = __webpack_require__(/*! react-relay */ 160);
+	
+	var _reactRelay2 = _interopRequireDefault(_reactRelay);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var CalendarDay = function (_React$Component) {
+	  _inherits(CalendarDay, _React$Component);
+	
+	  function CalendarDay() {
+	    _classCallCheck(this, CalendarDay);
+	
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(CalendarDay).apply(this, arguments));
+	  }
+	
+	  _createClass(CalendarDay, [{
+	    key: "render",
+	    value: function render() {
+	      var today = new Date();
+	      if (this.props.date === today.getDate() && this.props.month === today.getMonth() && this.props.year === today.getFullYear()) {
+	        return _react2.default.createElement(
+	          "span",
+	          null,
+	          "Today"
+	        );
+	      }
+	      return _react2.default.createElement(
+	        "span",
+	        null,
+	        this.props.date,
+	        ". ",
+	        this.props.month + 1,
+	        ". ",
+	        this.props.year
+	      );
+	    }
+	  }]);
+	
+	  return CalendarDay;
+	}(_react2.default.Component);
+	
+	// CalendarDay = Relay.createContainer(CalendarDay, {
+	//   fragments: null
+	// });
+	
+	exports.default = CalendarDay;
 
 /***/ }
 /******/ ]);

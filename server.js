@@ -1,6 +1,6 @@
 import express from "express";
 import GraphQLHTTP from "express-graphql";
-import Schema from "./schema";
+import Schema from "./data/schema";
 import { graphql } from "graphql";
 import { introspectionQuery, printSchema } from "graphql/utilities";
 import fs from "fs";
