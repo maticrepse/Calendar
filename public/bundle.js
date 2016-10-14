@@ -20303,26 +20303,10 @@
 	      }
 	    };
 	
-	    _this.previous = function () {
-	      if (_this.state.month === 0) {
-	        _this.setState({ year: _this.state.year - 1, month: 11 });
-	      } else {
-	        _this.setState({ month: _this.state.month - 1 });
-	      }
-	    };
-	
-	    _this.next = function () {
-	      if (_this.state.month === 11) {
-	        _this.setState({ year: _this.state.year + 1, month: 0 });
-	      } else {
-	        _this.setState({ month: _this.state.month + 1 });
-	      }
-	    };
-	
 	    _this.clickDate = function (event) {
 	      var clicked = event.target.id.split(".");
 	      _this.setState({
-	        showMonthView: false,
+	        showSeasonView: false,
 	        dayViewYear: parseInt(clicked[0]),
 	        dayViewMonth: parseInt(clicked[1]),
 	        dayViewDate: parseInt(clicked[2])
@@ -20331,116 +20315,140 @@
 	
 	    _this.monthView = function () {
 	      _this.setState({
-	        showMonthView: true
+	        showSeasonView: true
 	      });
 	    };
 	
 	    _this.state = {
-	      day: new Date().getDay(),
-	      date: new Date().getDate(),
-	      month: new Date().getMonth(),
-	      year: new Date().getFullYear(),
-	      showMonthView: true,
+	      startDate: new Date(2016, 9, 14),
+	      endDate: new Date(2017, 3, 1),
+	      today: new Date(),
+	      showSeasonView: true,
 	      dayViewDate: new Date().getDate(),
 	      dayViewMonth: new Date().getMonth(),
-	      dayViewYear: new Date().getFullYear()
+	      dayViewYear: new Date().getFullYear(),
+	      cenaTermina: 15
 	    };
 	    return _this;
 	  }
+	  // previous = () => {
+	  //   if (this.state.month === 0) {
+	  //       this.setState({year: this.state.year-1, month: 11});
+	  //   } else {
+	  //     this.setState({month: this.state.month-1});
+	  //   }
+	  // }
+	  // next = () => {
+	  //   if (this.state.month === 11) {
+	  //       this.setState({year: this.state.year+1, month: 0});
+	  //   } else {
+	  //     this.setState({month: this.state.month+1});
+	  //   }
+	  // }
+	
 	
 	  _createClass(CalendarMonth, [{
 	    key: "render",
 	    value: function render() {
 	      var date = [];
-	      var firstDay = new Date(this.state.year, this.state.month, 1).getDay();
-	      for (var i = 0; i < firstDay; i++) {
-	        var prevMonth = new Date(this.state.year, this.state.month, 1 - firstDay + i);
-	        var key = "" + prevMonth.getFullYear() + prevMonth.getMonth() + prevMonth.getDate();
-	        date.push(_react2.default.createElement(_CalendarDate2.default, { key: key, counter: null, date: prevMonth.getDate(), month: prevMonth.getMonth(), year: prevMonth.getFullYear(), addClass: "notThisMonth", clickDate: this.clickDate }));
-	      }
-	      date.push(_react2.default.createElement("br", null));
-	      for (var i = 1; i <= new Date(this.state.year, this.state.month + 1, 0).getDate(); i++) {
-	        var thisMonth = new Date(this.state.year, this.state.month, i);
-	        var _key = "" + thisMonth.getFullYear() + thisMonth.getMonth() + thisMonth.getDate();
-	        date.push(_react2.default.createElement(_CalendarDate2.default, { key: _key, counter: null, date: i, month: thisMonth.getMonth(), year: thisMonth.getFullYear(), addClass: "thisMonth", clickDate: this.clickDate }));
-	        if (i % 7 === 0) {
-	          date.push(_react2.default.createElement("br", null));
-	        }
-	      }
-	      var lastDay = new Date(this.state.year, this.state.month + 1, 0).getDay();
-	      for (var i = 1; i < 7 - lastDay; i++) {
-	        var nextMonth = new Date(this.state.year, this.state.month + 1, i);
-	        var _key2 = "" + nextMonth.getFullYear() + nextMonth.getMonth() + nextMonth.getDate();
-	        date.push(_react2.default.createElement(_CalendarDate2.default, { key: _key2, counter: null, date: i, month: nextMonth.getMonth(), year: nextMonth.getFullYear(), addClass: "notThisMonth", clickDate: this.clickDate }));
-	      }
+	      var stTerminov = 0;
+	      var pretekli = 0;
+	      var iDate = this.state.startDate;
+	      while (iDate < this.state.endDate) {
+	        date.push(_react2.default.createElement(
+	          "h4",
+	          null,
+	          this.month(iDate.getMonth())
+	        ));
 	
-	      var datumi = [];
-	      for (var i = 0; i < 7; i++) {
-	        datumi.push(_react2.default.createElement(
-	          "span",
-	          { key: this.day(i), className: "CalendarDays" },
-	          this.day(i)
-	        ));
+	        for (var i = iDate.getDate(); i <= new Date(iDate.getFullYear(), iDate.getMonth() + 1, 0).getDate(); i++) {
+	          var current = new Date(iDate.getFullYear(), iDate.getMonth(), i);
+	          if (current.getDay() == 5) {
+	            stTerminov++;
+	            var key = "" + current.getFullYear() + current.getMonth() + current.getDate();
+	            if (current < this.state.today) {
+	              date.push(_react2.default.createElement(_CalendarDate2.default, { key: key, counter: null, date: i, month: current.getMonth(), year: current.getFullYear(), addClass: "notThisMonth", clickDate: this.clickDate }));
+	              pretekli++;
+	            } else {
+	              date.push(_react2.default.createElement(_CalendarDate2.default, { key: key, counter: null, date: i, month: current.getMonth(), year: current.getFullYear(), addClass: "thisMonth", clickDate: this.clickDate }));
+	            }
+	          }
+	        }
+	        date.push(_react2.default.createElement("br", null));
+	        date.push(_react2.default.createElement("br", null));
+	        date.push(_react2.default.createElement("br", null));
+	        date.push(_react2.default.createElement("br", null));
+	        date.push(_react2.default.createElement("br", null));
+	        date.push(_react2.default.createElement("br", null));
+	        date.push(_react2.default.createElement("br", null));
+	        iDate = new Date(iDate.getFullYear(), iDate.getMonth() + 1, 1);
 	      }
-	      var gumbi = [];
-	      if (this.state.month === 11) {
-	        gumbi.push(_react2.default.createElement(
-	          "button",
-	          { onClick: this.previous },
-	          this.month(this.state.month - 1)
-	        ));
-	        gumbi.push(this.month(this.state.month) + " " + this.state.year);
-	        gumbi.push(_react2.default.createElement(
-	          "button",
-	          { onClick: this.next },
-	          this.month(0)
-	        ));
-	      } else if (this.state.month === 0) {
-	        gumbi.push(_react2.default.createElement(
-	          "button",
-	          { onClick: this.previous },
-	          this.month(11)
-	        ));
-	        gumbi.push(this.month(this.state.month) + " " + this.state.year);
-	        gumbi.push(_react2.default.createElement(
-	          "button",
-	          { onClick: this.next },
-	          this.month(this.state.month + 1)
-	        ));
-	      } else {
-	        gumbi.push(_react2.default.createElement(
-	          "button",
-	          { onClick: this.previous },
-	          this.month(this.state.month - 1)
-	        ));
-	        gumbi.push(this.month(this.state.month) + " " + this.state.year);
-	        gumbi.push(_react2.default.createElement(
-	          "button",
-	          { onClick: this.next },
-	          this.month(this.state.month + 1)
-	        ));
-	      }
+	      // for (var i = 0; i < firstDay; i++) {
+	      //   let prevMonth = new Date(this.state.year, this.state.month, 1-firstDay+i);
+	      //   let key = `${prevMonth.getFullYear()}${prevMonth.getMonth()}${prevMonth.getDate()}`;
+	      //   date.push(<CalendarDate key={key} counter={null} date={prevMonth.getDate()} month={prevMonth.getMonth()} year={prevMonth.getFullYear()} addClass="notThisMonth" clickDate={this.clickDate}/>);
+	      // }
+	      // date.push(<br />);
+	      // for (var i = 1; i <= new Date(this.state.year, this.state.month+1, 0).getDate(); i++) {
+	      //   let thisMonth = new Date(this.state.year, this.state.month, i);
+	      //   let key = `${thisMonth.getFullYear()}${thisMonth.getMonth()}${thisMonth.getDate()}`;
+	      //   date.push(<CalendarDate key={key} counter={null} date={i} month={thisMonth.getMonth()} year={thisMonth.getFullYear()} addClass="thisMonth"  clickDate={this.clickDate}/>);
+	      //   if (i%7 === 0) {
+	      //     date.push(<br />);
+	      //   }
+	      // }
+	      // let lastDay = new Date(this.state.year, this.state.month+1, 0).getDay();
+	      // for (var i = 1; i < 7-lastDay; i++) {
+	      //   let nextMonth = new Date(this.state.year, this.state.month+1, i);
+	      //   let key = `${nextMonth.getFullYear()}${nextMonth.getMonth()}${nextMonth.getDate()}`;
+	      //   date.push(<CalendarDate key={key} counter={null} date={i} month={nextMonth.getMonth()} year={nextMonth.getFullYear()} addClass="notThisMonth"  clickDate={this.clickDate}/>);
+	      // }
+	
+	      // let datumi = [];
+	      // for (var i = 0; i < 7; i++) {
+	      //   datumi.push(<span key={this.day(i)} className="CalendarDays">{this.day(i)}</span>);
+	      // }
+	      // let gumbi = [];
+	      // if (this.state.month === 11) {
+	      //    gumbi.push(<button onClick={this.previous}>{this.month(this.state.month-1)}</button>);
+	      //    gumbi.push(`${this.month(this.state.month)} ${this.state.year}`);
+	      //    gumbi.push(<button onClick={this.next}>{this.month(0)}</button>);
+	      //  } else if (this.state.month === 0) {
+	      //    gumbi.push(<button onClick={this.previous}>{this.month(11)}</button>);
+	      //    gumbi.push(`${this.month(this.state.month)} ${this.state.year}`);
+	      //    gumbi.push(<button onClick={this.next}>{this.month(this.state.month+1)}</button>);
+	      //  } else {
+	      //    gumbi.push(<button onClick={this.previous}>{this.month(this.state.month-1)}</button>);
+	      //    gumbi.push(`${this.month(this.state.month)} ${this.state.year}`);
+	      //    gumbi.push(<button onClick={this.next}>{this.month(this.state.month+1)}</button>);
+	      //  }
 	
 	      return _react2.default.createElement(
 	        "div",
 	        null,
-	        this.state.showMonthView ? _react2.default.createElement(
+	        this.state.showSeasonView ? _react2.default.createElement(
 	          "div",
 	          null,
 	          _react2.default.createElement(
 	            "h3",
 	            null,
-	            "Mesec"
+	            "Partizan 2016/2017"
 	          ),
 	          _react2.default.createElement(
 	            "div",
 	            null,
-	            gumbi
+	            "Število vseh terminov: ",
+	            stTerminov,
+	            "  Cena: ",
+	            stTerminov * this.state.cenaTermina
 	          ),
 	          _react2.default.createElement(
 	            "div",
 	            null,
-	            datumi
+	            "Število preteklih terminov: ",
+	            pretekli,
+	            "  Plačano: ",
+	            pretekli * this.state.cenaTermina
 	          ),
 	          _react2.default.createElement(
 	            "div",
