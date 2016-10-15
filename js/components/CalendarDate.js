@@ -11,7 +11,13 @@ class CalendarDate extends React.Component {
      }
      let classes = `CalendarDate ${this.props.addClass}`;
      let id = `${this.props.year}.${this.props.month}.${this.props.date}`;
-     return <span className={classes} onClick={this.props.clickDate} id={id}>{this.props.date}</span>;
+     let content;
+     if (this.props.addClass === "eventThisMonth") {
+       content = this.props.date+"   "+this.props.content;
+     } else {
+       content = this.props.date;
+     }
+     return <span className={classes} onClick={this.props.clickDate} id={id}>{content}</span>;
    }
 }
 

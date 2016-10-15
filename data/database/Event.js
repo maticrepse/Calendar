@@ -3,7 +3,7 @@ import Sequelize from 'sequelize';
 const Event = (Conn) =>
   Conn.define('event', {
     when: {
-      type: Sequelize.DATE,
+      type: Sequelize.STRING,
       allowNull: false
     },
     content: {

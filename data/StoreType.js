@@ -3,7 +3,8 @@ import {
   GraphQLString,
   GraphQLList,
   GraphQLID,
-  GraphQLBoolean
+  GraphQLBoolean,
+  GraphQLInt
 } from 'graphql';
 import Event from './Event.js';
 import database from './database/database';

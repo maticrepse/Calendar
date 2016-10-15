@@ -20350,6 +20350,8 @@
 	  _createClass(CalendarMonth, [{
 	    key: "render",
 	    value: function render() {
+	      var _this2 = this;
+	
 	      var date = [];
 	      var stTerminov = 0;
 	      var pretekli = 0;
@@ -20361,18 +20363,33 @@
 	          this.month(iDate.getMonth())
 	        ));
 	
-	        for (var i = iDate.getDate(); i <= new Date(iDate.getFullYear(), iDate.getMonth() + 1, 0).getDate(); i++) {
+	        var _loop = function _loop() {
 	          var current = new Date(iDate.getFullYear(), iDate.getMonth(), i);
 	          if (current.getDay() == 5) {
-	            stTerminov++;
-	            var key = "" + current.getFullYear() + current.getMonth() + current.getDate();
-	            if (current < this.state.today) {
-	              date.push(_react2.default.createElement(_CalendarDate2.default, { key: key, counter: null, date: i, month: current.getMonth(), year: current.getFullYear(), addClass: "notThisMonth", clickDate: this.clickDate }));
-	              pretekli++;
-	            } else {
-	              date.push(_react2.default.createElement(_CalendarDate2.default, { key: key, counter: null, date: i, month: current.getMonth(), year: current.getFullYear(), addClass: "thisMonth", clickDate: this.clickDate }));
+	            var notA = false;
+	            _this2.props.store.events.map(function (event) {
+	              var eventD = new Date(parseInt(event.when));
+	              if (eventD.getTime() === current.getTime()) {
+	                notA = true;
+	                var key = "" + current.getFullYear() + current.getMonth() + current.getDate();
+	                date.push(_react2.default.createElement(_CalendarDate2.default, { key: key, counter: null, date: i, month: current.getMonth(), year: current.getFullYear(), addClass: "eventThisMonth", colorTag: event.colorTag, content: event.content, clickDate: _this2.clickDate }));
+	              }
+	            });
+	            if (!notA) {
+	              stTerminov++;
+	              var key = "" + current.getFullYear() + current.getMonth() + current.getDate();
+	              if (current < _this2.state.today) {
+	                date.push(_react2.default.createElement(_CalendarDate2.default, { key: key, counter: null, date: i, month: current.getMonth(), year: current.getFullYear(), addClass: "notThisMonth", clickDate: _this2.clickDate }));
+	                pretekli++;
+	              } else {
+	                date.push(_react2.default.createElement(_CalendarDate2.default, { key: key, counter: null, date: i, month: current.getMonth(), year: current.getFullYear(), addClass: "thisMonth", clickDate: _this2.clickDate }));
+	              }
 	            }
 	          }
+	        };
+	
+	        for (var i = iDate.getDate(); i <= new Date(iDate.getFullYear(), iDate.getMonth() + 1, 0).getDate(); i++) {
+	          _loop();
 	        }
 	        date.push(_react2.default.createElement("br", null));
 	        date.push(_react2.default.createElement("br", null));
@@ -20474,6 +20491,10 @@
 	
 	;
 	
+	CalendarMonth.propTypes = {
+	  store: _react2.default.PropTypes.object
+	};
+	
 	CalendarMonth = _reactRelay2.default.createContainer(CalendarMonth, {
 	  fragments: {
 	    store: function store() {
@@ -20486,6 +20507,37 @@
 	              isRequisite: true
 	            },
 	            type: "ID"
+	          }, {
+	            children: [{
+	              fieldName: "id",
+	              kind: "Field",
+	              metadata: {
+	                isRequisite: true
+	              },
+	              type: "ID"
+	            }, {
+	              fieldName: "when",
+	              kind: "Field",
+	              metadata: {},
+	              type: "String"
+	            }, {
+	              fieldName: "content",
+	              kind: "Field",
+	              metadata: {},
+	              type: "String"
+	            }, {
+	              fieldName: "colorTag",
+	              kind: "Field",
+	              metadata: {},
+	              type: "String"
+	            }],
+	            fieldName: "events",
+	            kind: "Field",
+	            metadata: {
+	              canHaveSubselections: true,
+	              isPlural: true
+	            },
+	            type: "Event"
 	          }],
 	          id: _reactRelay2.default.QL.__id(),
 	          kind: "Fragment",
@@ -43656,10 +43708,16 @@
 	      }
 	      var classes = "CalendarDate " + this.props.addClass;
 	      var id = this.props.year + "." + this.props.month + "." + this.props.date;
+	      var content = void 0;
+	      if (this.props.addClass === "eventThisMonth") {
+	        content = this.props.date + "   " + this.props.content;
+	      } else {
+	        content = this.props.date;
+	      }
 	      return _react2.default.createElement(
 	        "span",
 	        { className: classes, onClick: this.props.clickDate, id: id },
-	        this.props.date
+	        content
 	      );
 	    }
 	  }]);

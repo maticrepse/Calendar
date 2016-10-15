@@ -121,13 +121,24 @@ class CalendarMonth extends Component {
       for (var i = iDate.getDate(); i <= new Date(iDate.getFullYear(), iDate.getMonth()+1, 0).getDate(); i++) {
         let current = new Date(iDate.getFullYear(), iDate.getMonth(), i);
         if (current.getDay() == 5) {
-          stTerminov++;
-          let key = `${current.getFullYear()}${current.getMonth()}${current.getDate()}`;
-          if (current < this.state.today) {
-            date.push(<CalendarDate key={key} counter={null} date={i} month={current.getMonth()} year={current.getFullYear()} addClass="notThisMonth"  clickDate={this.clickDate}/>);
-            pretekli++
-          } else {
-            date.push(<CalendarDate key={key} counter={null} date={i} month={current.getMonth()} year={current.getFullYear()} addClass="thisMonth"  clickDate={this.clickDate}/>);
+          let notA = false;
+          this.props.store.events.map(event => {
+            let eventD = new Date(parseInt(event.when));
+            if (eventD.getTime() === current.getTime()) {
+              notA = true;
+              let key = `${current.getFullYear()}${current.getMonth()}${current.getDate()}`;
+              date.push(<CalendarDate key={key} counter={null} date={i} month={current.getMonth()} year={current.getFullYear()} addClass="eventThisMonth" colorTag={event.colorTag} content={event.content}  clickDate={this.clickDate}/>);
+            }
+          });
+          if (!notA) {
+            stTerminov++;
+            let key = `${current.getFullYear()}${current.getMonth()}${current.getDate()}`;
+            if (current < this.state.today) {
+              date.push(<CalendarDate key={key} counter={null} date={i} month={current.getMonth()} year={current.getFullYear()} addClass="notThisMonth"  clickDate={this.clickDate}/>);
+              pretekli++
+            } else {
+              date.push(<CalendarDate key={key} counter={null} date={i} month={current.getMonth()} year={current.getFullYear()} addClass="thisMonth"  clickDate={this.clickDate}/>);
+            }
           }
         }
       }
@@ -202,11 +213,21 @@ class CalendarMonth extends Component {
   }
 };
 
+CalendarMonth.propTypes = {
+  store: React.PropTypes.object,
+};
+
 CalendarMonth = Relay.createContainer(CalendarMonth, {
    fragments: {
       store: () => Relay.QL`
          fragment on Store {
             id
+            events {
+              id
+              when
+              content
+              colorTag
+            }
          }
       `
    }

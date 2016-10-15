@@ -22,6 +22,17 @@ export const Event = event(Conn);
 
 Conn.sync({
   force: true
+}).then(() => {
+  Event.create({
+    when: '1480028400000',
+    content: 'Interdiskont\nODPADE!',
+    colorTag: 'RED',
+  });
+  Event.create({
+    when: '1487890800000',
+    content: 'Interdiskont\nODPADE!',
+    colorTag: 'RED',
+  });
 });
 
 
